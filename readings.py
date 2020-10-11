@@ -1,6 +1,7 @@
 import serial
 import re
 from pynput import keyboard
+import csv
 
 # --- CODE FLOW --- #
 
@@ -12,13 +13,13 @@ from pynput import keyboard
 # ----------------- #
 
 def on_press(key):
+    device.reset_input_buffer()
+    if key == keyboard.Key.ctrl_l:
+        print(translate())
     print("You pressed {0}".format(key))
 
 
 def on_release(key):
-
-    if key == keyboard.Key.ctrl_l:
-        print(translate())
     print("You released {0}".format(key))
 
 
@@ -76,11 +77,11 @@ def main():
     # angle = translate()
     # print(angle[2])
     pass
-
+    
 
 if __name__ == "__main__":
 
-    device = serial.Serial(port='COM3', baudrate=9600)
+    device = serial.Serial(port='COM5', baudrate=9600)
     print(device.portstr)
 
     listener = keyboard.Listener(
