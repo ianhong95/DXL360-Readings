@@ -25,7 +25,7 @@ def on_press(key):
 def on_release(key):
     print("You pressed {0}".format(key))
 
-# ----- Insert data into selected worksheet ----- #
+    # ----- Insert data into selected worksheet ----- #
 
 
 def main():
