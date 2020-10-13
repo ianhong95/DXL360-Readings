@@ -1,4 +1,5 @@
 import sys
+from datetime import datetime
 
 from PyQt5.QtCore import Qt, QRect
 from PyQt5.QtWidgets import QMainWindow, QApplication, QWidget
@@ -15,7 +16,7 @@ class readingUI(QMainWindow):
         self.defaultPath = 'T:\\Engineering\Enginnering\Projects'
 
         self.setWindowTitle('DXL360 Readings')
-        self.setGeometry(200, 200, 500, 300)
+        self.setGeometry(300, 200, 800, 500)
         self._centralWidget = QWidget(self)
 
         self.layout = QGridLayout()
@@ -25,6 +26,7 @@ class readingUI(QMainWindow):
 
         self.createInputLayout()
         self.createReadButton()
+        # self.signals()
         
 
     def createInputLayout(self):
@@ -32,10 +34,16 @@ class readingUI(QMainWindow):
         self._inputLayout = QVBoxLayout()
 
         self._inputFrm = QFormLayout()
-        self._inputFrm.setGeometry(QRect(0, 0, 50, 50))
+        self._inputFrm.setGeometry(QRect(0, 0, 100, 50))
         self._inputFrm.setFieldGrowthPolicy(False)
         self._inputFrm.addRow('COM Port:', QLineEdit())
-        self._inputFrm.addRow('Date:', QLineEdit())
+        self._inputFrm.addRow('Date:', QLineEdit(
+            str(datetime.now().strftime('%b')) +
+            '. ' +
+            str(datetime.now().day) +
+            ', ' +
+            str(datetime.now().year)
+            ))
         self._inputFrm.addRow('Output to file path:', QLineEdit(self.defaultPath))
 
         self._inputLayout.setGeometry(QRect(0, 0, 100,100))
@@ -52,11 +60,16 @@ class readingUI(QMainWindow):
     def createReadButton(self):
         
         self.readButton = QPushButton('Take reading')
-        self.readButton.setGeometry(0, 500, 50, 100)
+        self.readButton.setFixedSize(500, 100)
 
-        self._btnLayout.addWidget(self.readButton)
+        self.layout.addWidget(self.readButton, 1, 0)
 
-        self.layout.addWidget(self.readButton, 0, 1)
+
+    def signals(self):
+        pass
+
+class readingController:
+    pass
 
     
 def main():
