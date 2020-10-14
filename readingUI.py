@@ -1,7 +1,8 @@
 import sys
 from datetime import datetime
 
-from PyQt5.QtCore import Qt, QRect
+from PyQt5.QtCore import Qt, QRect, QPoint, QSize
+from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QMainWindow, QApplication, QWidget
 from PyQt5.QtWidgets import QLabel, QLineEdit, QPushButton
 from PyQt5.QtWidgets import QFormLayout, QVBoxLayout, QHBoxLayout, QGridLayout
@@ -16,7 +17,8 @@ class readingUI(QMainWindow):
         self.defaultPath = 'T:\\Engineering\Enginnering\Projects'
 
         self.setWindowTitle('DXL360 Readings')
-        self.setGeometry(300, 200, 800, 500)
+        self.setFixedSize(400, 300)
+        self.setGeometry(300, 200, 0, 0)
         self._centralWidget = QWidget(self)
 
         self.layout = QGridLayout()
@@ -31,38 +33,73 @@ class readingUI(QMainWindow):
 
     def createInputLayout(self):
 
-        self._inputLayout = QVBoxLayout()
+        # ----- Initialize input layout ----- #
 
-        self._inputFrm = QFormLayout()
-        self._inputFrm.setGeometry(QRect(0, 0, 100, 50))
-        self._inputFrm.setFieldGrowthPolicy(False)
-        self._inputFrm.addRow('COM Port:', QLineEdit())
-        self._inputFrm.addRow('Date:', QLineEdit(
+        self._inputLayout = QGridLayout()
+        # self._inputLayout.setGeometry(QRect(QPoint(0, 0), QSize(50,50)))
+        self._inputLayout.width = 100
+        self._inputLayout.height = 100
+
+
+        # ----- Assign elements to variables so we can access them later ----- #
+
+        lbCOMPort = QLabel('COM Port:')
+        lbDate = QLabel('Date: ')
+        lbFilePath = QLabel('Output file path:')
+        lbFileName = QLabel('Output file name:')
+
+        edCOMPort = QLineEdit()
+        edDate = QLineEdit(
             str(datetime.now().strftime('%b')) +
             '. ' +
             str(datetime.now().day) +
             ', ' +
             str(datetime.now().year)
-            ))
-        self._inputFrm.addRow('Output to file path:', QLineEdit(self.defaultPath))
+            )
+        edFilePath = QLineEdit('T:\\Engineering\\Engineering\\Projects')
+        edFileName = QLineEdit('readings.xlsx')
 
-        self._inputLayout.setGeometry(QRect(0, 0, 100,100))
-        self._inputLayout.addLayout(self._inputFrm)
-        # self._centralWidget.setLayout(self._inputLayout)
+
+        # ----- Initialize input form elements, set default values ----- #
+
+        self._inputLayout.addWidget(lbCOMPort, 0, 0)
+        self._inputLayout.addWidget(edCOMPort, 0, 1)
+
+        self._inputLayout.addWidget(QLabel('Date:'), 1, 0)
+        self._inputLayout.addWidget(QLineEdit(
+            str(datetime.now().strftime('%b')) +
+            '. ' +
+            str(datetime.now().day) +
+            ', ' +
+            str(datetime.now().year)
+            ),
+            1, 1)
+
+        self._inputLayout.addWidget(QLabel('Output file path:'), 2, 0)
+        self._inputLayout.addWidget(
+            QLineEdit('T:\\Engineering\\Engineering\\Projects'), 2, 1)
+
+        self._inputLayout.addWidget(lbFileName, 3, 0)
+        self._inputLayout.addWidget(edFileName, 3, 1)
+
+        edCOMPort.setCursorPosition(5)
+
+
+        # ----- Insert layouts into appropriate spots ----- #
+
         self.layout.addLayout(self._inputLayout, 0, 0)
-
-        # Example of how to get text from inputFrm:
-            # widget_item = self._inputFrm.itemAt(0)
-            # text = widget_item.widget().text()
-            # print(text)
 
 
     def createReadButton(self):
         
         self.readButton = QPushButton('Take reading')
-        self.readButton.setFixedSize(500, 100)
+        self.readButton.setFont((QFont('Calibri', 24)))
+        self.readButton.setFixedSize(300, 100)
+        self.readButton.hasFocus()
 
         self.layout.addWidget(self.readButton, 1, 0)
+
+        self.layout.itemAtPosition(1, 0).setAlignment(Qt.AlignCenter)
 
 
     def signals(self):
