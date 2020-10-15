@@ -4,8 +4,10 @@ from datetime import datetime
 from PyQt5.QtCore import Qt, QRect, QPoint, QSize
 from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QMainWindow, QApplication, QWidget
-from PyQt5.QtWidgets import QLabel, QLineEdit, QPushButton
+from PyQt5.QtWidgets import QLabel, QLineEdit, QPushButton, QTableWidget, QTableWidgetItem
 from PyQt5.QtWidgets import QFormLayout, QVBoxLayout, QHBoxLayout, QGridLayout
+
+from SerialObjClass import SerialObj as cereal
 
 class readingUI(QMainWindow):
 
@@ -17,7 +19,7 @@ class readingUI(QMainWindow):
         self.defaultPath = 'T:\\Engineering\Enginnering\Projects'
 
         self.setWindowTitle('DXL360 Readings')
-        self.setFixedSize(600, 500)
+        self.setFixedSize(500, 520)
         self.move(400, 200)
         self._centralWidget = QWidget(self)
 
@@ -26,11 +28,15 @@ class readingUI(QMainWindow):
         self.setCentralWidget(self._centralWidget)
         self._centralWidget.setLayout(self.layout)
 
+        # Initialize UI elements
         self.createInputLayout()
+        self.createTable()
         self.createReadButton()
         self.createStartButton()
         self.createClearButton()
-        
+
+        # Place UI elements into grid slots
+        self.layoutElements()
 
     def createInputLayout(self):
 
@@ -78,80 +84,92 @@ class readingUI(QMainWindow):
         self._inputLayout.addWidget(self.edFileName, 4, 1)
 
         # ----- Format input form elements ----- #
-        self.lbCOMPort.setAlignment(Qt.AlignRight)
-        self.lbDate.setAlignment(Qt.AlignRight)
-        self.lbArmID.setAlignment(Qt.AlignRight)
-        self.lbFilePath.setAlignment(Qt.AlignRight)
-        self.lbFileName.setAlignment(Qt.AlignRight)
 
-        self.edCOMPort.setFixedWidth(100)
-        self.edCOMPort.setAlignment(Qt.AlignTop)
+        for row in range(0, 5):
+            self._inputLayout.itemAtPosition(row, 0).setAlignment(Qt.AlignLeft)     
+            self._inputLayout.itemAtPosition(row, 1).setAlignment(Qt.AlignLeft)
 
-        self.edDate.setFixedWidth(200)
-        self.edDate.setAlignment(Qt.AlignTop)
-
-        self.edArmID.setFixedWidth(200)
-        self.edArmID.setAlignment(Qt.AlignTop)
         self.edArmID.setCursorPosition(0)
-
-        self.edFilePath.setFixedWidth(200)
-        self.edFilePath.setAlignment(Qt.AlignTop)
         self.edFilePath.setCursorPosition(0)
+
+    
+    def createTable(self):
+        self.defaultArmPos = [
+            '+45°', '+40°', '+30°', '+15°', '0°',
+            '-15°', '-30°', '-45°', '-60°', '-75°'
+        ]
+
+        self.readingTbl = QTableWidget(len(self.defaultArmPos), 2)
+
+        self.readingTbl.setHorizontalHeaderLabels(['Arm Position', 'FR5 Angle'])
         
-        self.edFileName.setFixedWidth(200)
-        self.edFileName.setAlignment(Qt.AlignTop)
+        self.readingTbl.setColumnWidth(0, 80)
+        self.readingTbl.setColumnWidth(1, 80)
+        
 
-
-        # ----- Insert layouts into appropriate spots ----- #
-
-        self.layout.addLayout(self._inputLayout, 0, 0)
-
+        for row in range(self.readingTbl.rowCount()):
+            self.readingTbl.setItem(row, 0, QTableWidgetItem(self.defaultArmPos[row]))
 
     # ----- Create some buttons ----- #
 
     def createStartButton(self):
         self.startButton = QPushButton('Start')
-
-        self.layout.addWidget(self.startButton, 1, 0)
-        self.layout.itemAtPosition(1, 0).setAlignment(Qt.AlignRight)
+        self.startButton.setFixedHeight(50)
 
 
     def createClearButton(self):
         self.clearButton = QPushButton('Clear')
-
-        self.layout.addWidget(self.clearButton, 1, 1)
-        self.layout.itemAtPosition(1, 1).setAlignment(Qt.AlignLeft)
+        self.clearButton.setFixedHeight(50)
 
 
     def createReadButton(self):
         
         self.readButton = QPushButton('Take reading')
         self.readButton.setFont((QFont('Calibri', 24)))
-        self.readButton.setFixedSize(400, 100)
-        self.readButton.hasFocus()
-
-        self.layout.addWidget(self.readButton, 2, 0, 1, 2)
-
-        self.layout.itemAtPosition(2, 0).setAlignment(Qt.AlignHCenter)
+        self.readButton.setFixedSize(200, 100)
+        # self.readButton.hasFocus()
 
 
     # ----- Define some methods ----- #
 
     def clearInputs(self):
-        self.edCOMPort.setText('')
-        self.edDate.setText('')
-        self.edArmID.setText('')
-        self.edFilePath.setText('')
-        self.edFileName.setText('')
+        # self.edCOMPort.setText('')
+        # self.edDate.setText('')
+        # self.edArmID.setText('')
+        # self.edFilePath.setText('')
+        # self.edFileName.setText('')
+        
+        for row in range(self.readingTbl.rowCount()):
+            self.readingTbl.setItem(row, 1, QTableWidgetItem(''))
+
 
     def isReading(self):
         if self.startButton.text() == 'Start':
+            self.COMPort = 'COM' + self.edCOMPort.text()
             self.startButton.setText('Stop')
         elif self.startButton.text() == 'Stop':
             self.startButton.setText('Start')
 
-    def takeReading(self):
-        pass
+    
+    def layoutElements(self):
+        self.layout.addLayout(self._inputLayout, 0, 0)
+
+        # --- Layout start/clear buttons --- #
+        self.vertLayout1 = QVBoxLayout()
+
+        self.vertLayout1.addWidget(self.startButton, 0)
+        # self.vertLayout1.itemAt(0).setAlignment(Qt.AlignCenter)
+
+        self.vertLayout1.addWidget(self.clearButton, 1)
+        # self.vertLayout1.itemAt(1).setAlignment(Qt.AlignCenter)
+
+        self.layout.addLayout(self.vertLayout1, 0, 1)
+        # ----------------------------------- #
+
+        self.layout.addWidget(self.readingTbl, 3, 0)
+
+        self.layout.addWidget(self.readButton, 3, 1, 1, 2)
+        self.layout.itemAtPosition(3, 0).setAlignment(Qt.AlignHCenter)
 
 
 class UIController:

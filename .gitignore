@@ -2,3 +2,4 @@
 /venv
 readings.xlsx
 .pylintrc
+__pycache__
