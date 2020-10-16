@@ -131,6 +131,7 @@ class readingUI(QMainWindow):
         self.readButton = QPushButton('Take reading')
         self.readButton.setFont((QFont('Calibri', 24)))
         self.readButton.setFixedSize(200, 100)
+        self.readButton.setEnabled(False)
 
     
     def layoutElements(self):
@@ -173,53 +174,35 @@ class readingUI(QMainWindow):
     def isReading(self):
         if self.startButton.text() == 'Start':
             self.COMPort = 'COM' + self.edCOMPort.text()
+            self.readButton.setEnabled(True)
             self.startButton.setText('Stop')
         elif self.startButton.text() == 'Stop':
             self.startButton.setText('Start')
+            self.readButton.setEnabled(False)
 
 
-    # def takeReading(self):
-    #     print('current row is ' + str(self.readingTbl.currentRow()))
-
-    #     if self.readingTbl.currentRow() == -1:
-    #         self.readingTbl.setCurrentCell(0, 1)
-    #         self.readingTbl.setItem(self.readingTbl.currentRow(), 1, QTableWidgetItem('success'))
-    #         self.readingTbl.setCurrentCell(self.readingTbl.currentRow() + 1, 1)
-
-    #     elif self.readingTbl.currentRow() != -1 and self.readingTbl.currentRow() < self.readingTbl.rowCount() - 1:
-    #         self.readingTbl.setItem(self.readingTbl.currentRow(), 1, QTableWidgetItem('success'))
-    #         self.readingTbl.setCurrentCell(self.readingTbl.currentRow() + 1, 1)
-
-    #     elif self.readingTbl.currentRow() != -1 and self.readingTbl.currentRow() == self.readingTbl.rowCount() - 1:
-    #         self.readingTbl.setItem(self.readingTbl.currentRow(), 1, QTableWidgetItem('success'))
-    #         print('you\'re done!')
-
-    #     print('now the current row is ' + str(self.readingTbl.currentRow()))
-
-
-class UIController:
+class internalController:
     def __init__(self, readingWindow):
         self.readingWindow = readingWindow
-        self.connectSignals()
+        self.connectIntSigs()
 
 
-    def connectSignals(self):
+    def connectIntSigs(self):
         self.readingWindow.clearButton.clicked.connect(self.readingWindow.clearInputs)
         self.readingWindow.startButton.clicked.connect(self.readingWindow.isReading)
-        # self.readingWindow.readButton.clicked.connect(self.readingWindow.takeReading)
 
     
-def main():
+# def main():
 
-    DXL360App = QApplication(sys.argv)
+#     DXL360App = QApplication(sys.argv)
 
-    readingWindow = readingUI()
-    readingWindow.show()
+#     readingWindow = readingUI()
+#     readingWindow.show()
 
-    UIController(readingWindow=readingWindow)
+#     internalController(readingWindow=readingWindow)
 
-    sys.exit(DXL360App.exec_())
+#     sys.exit(DXL360App.exec_())
 
 
-if __name__ == '__main__':
-    main()
+# if __name__ == '__main__':
+#     main()

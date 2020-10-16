@@ -1,4 +1,4 @@
-from readingUI import UIController, readingUI
+from readingUI import readingUI, internalController
 from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QLabel, QLineEdit, QPushButton, QTableWidget, QTableWidgetItem
 
@@ -8,54 +8,65 @@ import serial
 from SerialObjClass import SerialObj as cereal
 
 
-def takeReading():
-    rawBytes = serialDevice.serialRead()
-    reading = serialDevice.translate()
+def takeReading(device):
 
-    print(serialDevice.finalReading)
+    rawBytes = device.serialRead()
+    reading = device.translate()
+
+    print(device.finalReading)
 
     return reading
 
 
-def recordReading(window):
-    print('current row is ' + str(window.readingTbl.currentRow()))
+def recordReading(mainGUI, device):
 
-    reading = takeReading()
+    print('current row is ' + str(mainGUI.readingTbl.currentRow()))
 
-    if window.readingTbl.currentRow() == -1:
-        window.readingTbl.setCurrentCell(0, 1)
-        window.readingTbl.setItem(window.readingTbl.currentRow(), 1, QTableWidgetItem(reading[2]))
-        window.readingTbl.setCurrentCell(window.readingTbl.currentRow() + 1, 1)
+    reading = takeReading(device)
 
-    elif window.readingTbl.currentRow() != -1 and window.readingTbl.currentRow() < window.readingTbl.rowCount() - 1:
-        window.readingTbl.setItem(window.readingTbl.currentRow(), 1, QTableWidgetItem(reading[2]))
-        window.readingTbl.setCurrentCell(window.readingTbl.currentRow() + 1, 1)
+    if mainGUI.readingTbl.currentRow() == -1:
+        mainGUI.readingTbl.setCurrentCell(0, 1)
+        mainGUI.readingTbl.setItem(mainGUI.readingTbl.currentRow(), 1, QTableWidgetItem(reading[2]))
+        mainGUI.readingTbl.setCurrentCell(mainGUI.readingTbl.currentRow() + 1, 1)
 
-    elif window.readingTbl.currentRow() != -1 and window.readingTbl.currentRow() == window.readingTbl.rowCount() - 1:
-        window.readingTbl.setItem(window.readingTbl.currentRow(), 1, QTableWidgetItem(reading[2]))
+    elif mainGUI.readingTbl.currentRow() != -1 and mainGUI.readingTbl.currentRow() < mainGUI.readingTbl.rowCount() - 1:
+        mainGUI.readingTbl.setItem(mainGUI.readingTbl.currentRow(), 1, QTableWidgetItem(reading[2]))
+        mainGUI.readingTbl.setCurrentCell(mainGUI.readingTbl.currentRow() + 1, 1)
+
+    elif mainGUI.readingTbl.currentRow() != -1 and mainGUI.readingTbl.currentRow() == mainGUI.readingTbl.rowCount() - 1:
+        mainGUI.readingTbl.setItem(mainGUI.readingTbl.currentRow(), 1, QTableWidgetItem(reading[2]))
         print('you\'re done!')
 
-    print('now the current row is ' + str(window.readingTbl.currentRow()))
+    print('now the current row is ' + str(mainGUI.readingTbl.currentRow()))
+
+class externalController:
+    def __init__(self, mainGUI):
+        self.mainGUI = mainGUI
+        self.COMPort = 'COM' + mainGUI.edCOMPort.text()
+        self.connectExtSigs()
+    
+    
+    def initCOMPort(self, Port):
+        self.serialDevice = cereal(Port, 9600)
+
+
+    def connectExtSigs(self):
+        self.mainGUI.readButton.clicked.connect(lambda: recordReading(self.mainGUI, self.serialDevice))
+        self.mainGUI.startButton.clicked.connect(lambda: self.initCOMPort(self.COMPort))
 
 
 def main():
-    pass
-
-
-if __name__ == '__main__':
-
     DXL360_App = QtWidgets.QApplication(sys.argv)
 
-    window = readingUI()
-    controller = UIController(window)
+    mainGUI = readingUI()
 
-    serialDevice = cereal('COM6', 9600)
+    intController = internalController(mainGUI)
+    extController = externalController(mainGUI)
 
-    window.readButton.clicked.connect(lambda: recordReading(window))
-
-
-    window.show()
+    mainGUI.show()
 
     sys.exit(DXL360_App.exec())
 
+
+if __name__ == '__main__':
     main()
