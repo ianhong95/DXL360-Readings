@@ -1,4 +1,5 @@
 import serial
+import re
 
 
 class SerialObj:
@@ -10,7 +11,10 @@ class SerialObj:
 
     
     def serialRead(self):
+        self.serialDevice.reset_input_buffer()
+
         self.rawBytes = self.serialDevice.read(24)
+        self.decodeable = True
 
         return self.rawBytes
 
@@ -26,11 +30,11 @@ class SerialObj:
 
     def regExMatching(self, byteToStr):
 
-        regExPattern = re.compile(r'(X)(+|-)(\d\d)(\d\d)')
+        regExPattern = re.compile(r'(X)(\+|\-)(\d\d)(\d\d)')
         
         self.matchObj = regExPattern.search(byteToStr)
 
-        if matchObj != None:
+        if self.matchObj != None:
             return self.matchObj.groups()
         else:
             print('No match found, processing next string of bytes')
@@ -46,15 +50,15 @@ class SerialObj:
 
 
     def translate(self):
-        while self.decodeable is not True:
-            self.rawBytes = self.serialRead()
-            self.byteToStr = self.decodeBytes(self.rawBytes)
+        # while self.decodeable is not True:
+        self.rawBytes = self.serialRead()
+        self.byteToStr = self.decodeBytes(self.rawBytes)
 
         self.readingGrps = self.regExMatching(self.byteToStr)
 
-        self.readingSign = reverseSign(self.readingGrps[1])
+        self.readingSign = self.reverseSign(self.readingGrps[1])
         self.whole = int(self.readingGrps[2])
-        self.dec = round(int(self.readingGrps[3]/100), 1)
+        self.dec = round(int(self.readingGrps[3])/100, 1)
 
         self.numReading = self.whole + self.dec
 

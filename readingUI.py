@@ -4,7 +4,6 @@ from datetime import datetime
 from PyQt5.QtCore import Qt, QRect, QPoint, QSize
 from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QMainWindow, QApplication, QWidget
-from PyQt5.QtWidgets import QMenuBar
 from PyQt5.QtWidgets import QLabel, QLineEdit, QPushButton, QTableWidget, QTableWidgetItem
 from PyQt5.QtWidgets import QFormLayout, QVBoxLayout, QHBoxLayout, QGridLayout
 
@@ -20,7 +19,7 @@ class readingUI(QMainWindow):
         self.defaultPath = 'T:\\Engineering\Enginnering\Projects'
 
         self.setWindowTitle('DXL360 Readings')
-        self.setFixedSize(500, 520)
+        self.setFixedSize(800, 1000)
         self.move(400, 200)
         self._centralWidget = QWidget(self)
 
@@ -28,8 +27,6 @@ class readingUI(QMainWindow):
 
         self.setCentralWidget(self._centralWidget)
         self._centralWidget.setLayout(self.layout)
-
-        self.curRow = 0
 
         # Initialize UI elements
         self.createInputLayout()
@@ -169,8 +166,8 @@ class readingUI(QMainWindow):
         
         for row in range(self.readingTbl.rowCount()):
             self.readingTbl.setItem(row, 1, QTableWidgetItem(''))
-            self.curRow = 0
-            self.readingTbl.setCurrentCell(0, 1)
+        
+        self.readingTbl.setCurrentCell(0, 1)
 
 
     def isReading(self):
@@ -181,16 +178,23 @@ class readingUI(QMainWindow):
             self.startButton.setText('Start')
 
 
-    def takeReading(self):
-        if self.readingTbl.currentRow() == -1:
-            self.readingTbl.setCurrentCell(0, 1)
-            self.readingTbl.setItem(self.readingTbl.currentRow(), 1, QTableWidgetItem('success'))
-            self.readingTbl.setCurrentCell(self.readingTbl.currentRow() + 1, 1)
-        else:
-            self.readingTbl.setItem(self.readingTbl.currentRow(), 1, QTableWidgetItem('success'))
-            self.readingTbl.setCurrentCell(self.readingTbl.currentRow() + 1, 1)
+    # def takeReading(self):
+    #     print('current row is ' + str(self.readingTbl.currentRow()))
 
-        print('current row is ' + str(self.readingTbl.currentRow()))
+    #     if self.readingTbl.currentRow() == -1:
+    #         self.readingTbl.setCurrentCell(0, 1)
+    #         self.readingTbl.setItem(self.readingTbl.currentRow(), 1, QTableWidgetItem('success'))
+    #         self.readingTbl.setCurrentCell(self.readingTbl.currentRow() + 1, 1)
+
+    #     elif self.readingTbl.currentRow() != -1 and self.readingTbl.currentRow() < self.readingTbl.rowCount() - 1:
+    #         self.readingTbl.setItem(self.readingTbl.currentRow(), 1, QTableWidgetItem('success'))
+    #         self.readingTbl.setCurrentCell(self.readingTbl.currentRow() + 1, 1)
+
+    #     elif self.readingTbl.currentRow() != -1 and self.readingTbl.currentRow() == self.readingTbl.rowCount() - 1:
+    #         self.readingTbl.setItem(self.readingTbl.currentRow(), 1, QTableWidgetItem('success'))
+    #         print('you\'re done!')
+
+    #     print('now the current row is ' + str(self.readingTbl.currentRow()))
 
 
 class UIController:
@@ -202,7 +206,7 @@ class UIController:
     def connectSignals(self):
         self.readingWindow.clearButton.clicked.connect(self.readingWindow.clearInputs)
         self.readingWindow.startButton.clicked.connect(self.readingWindow.isReading)
-        self.readingWindow.readButton.clicked.connect(self.readingWindow.takeReading)
+        # self.readingWindow.readButton.clicked.connect(self.readingWindow.takeReading)
 
     
 def main():
