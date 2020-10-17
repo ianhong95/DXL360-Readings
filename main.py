@@ -39,20 +39,28 @@ def recordReading(mainGUI, device):
 
     print('now the current row is ' + str(mainGUI.readingTbl.currentRow()))
 
+
+def gen()
+
+
 class externalController:
     def __init__(self, mainGUI):
         self.mainGUI = mainGUI
-        self.COMPort = 'COM' + mainGUI.edCOMPort.text()
         self.connectExtSigs()
     
     
-    def initCOMPort(self, Port):
-        self.serialDevice = cereal(Port, 9600)
+    def initCOMPort(self):
+        if self.mainGUI.startButton.text() == 'Stop':
+            self.COMPort = 'COM' + self.mainGUI.edCOMPort.text()
+            try:
+                self.serialDevice = cereal(self.COMPort, 9600)
+            except:
+                print('Serial Device already exists!')
 
 
     def connectExtSigs(self):
         self.mainGUI.readButton.clicked.connect(lambda: recordReading(self.mainGUI, self.serialDevice))
-        self.mainGUI.startButton.clicked.connect(lambda: self.initCOMPort(self.COMPort))
+        self.mainGUI.startButton.clicked.connect(self.initCOMPort)
 
 
 def main():

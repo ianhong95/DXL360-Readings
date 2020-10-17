@@ -34,6 +34,7 @@ class readingUI(QMainWindow):
         self.createReadButton()
         self.createStartButton()
         self.createClearButton()
+        self.createExportButton()
 
         # Place UI elements into grid slots
         self.layoutElements()
@@ -117,21 +118,28 @@ class readingUI(QMainWindow):
 
     def createStartButton(self):
         self.startButton = QPushButton('Start')
-        self.startButton.setFixedHeight(50)
+        self.startButton.setFixedHeight(30)
         self.startButton.setFont(QFont('Calibri', 16))
 
 
     def createClearButton(self):
         self.clearButton = QPushButton('Clear')
-        self.clearButton.setFixedHeight(50)
+        self.clearButton.setFixedHeight(30)
         self.clearButton.setFont(QFont('Calibri', 16))
 
 
     def createReadButton(self):
         self.readButton = QPushButton('Take reading')
-        self.readButton.setFont((QFont('Calibri', 24)))
+        self.readButton.setFont(QFont('Calibri', 24))
         self.readButton.setFixedSize(200, 100)
         self.readButton.setEnabled(False)
+
+    
+    def createExportButton(self):
+        self.exportButton = QPushButton('Export Data')
+        self.exportButton.setFixedHeight(30)
+        self.exportButton.setFont(QFont('Calibri', 16))
+        self.exportButton.setEnabled(False)
 
     
     def layoutElements(self):
@@ -141,10 +149,13 @@ class readingUI(QMainWindow):
         self.vertLayout1 = QVBoxLayout()
 
         self.vertLayout1.addWidget(self.startButton, 0)
-        self.vertLayout1.itemAt(0).setAlignment(Qt.AlignRight)
+        self.vertLayout1.itemAt(0).setAlignment(Qt.AlignHCenter)
 
         self.vertLayout1.addWidget(self.clearButton, 1)
-        self.vertLayout1.itemAt(1).setAlignment(Qt.AlignRight)
+        self.vertLayout1.itemAt(1).setAlignment(Qt.AlignHCenter)
+
+        self.vertLayout1.addWidget(self.exportButton, 2)
+        self.vertLayout1.itemAt(2).setAlignment(Qt.AlignHCenter)
 
         self.layout.addLayout(self.vertLayout1, 0, 1)
         # ----------------------------------- #
@@ -158,13 +169,7 @@ class readingUI(QMainWindow):
 
     # ----- Define some methods ----- #
 
-    def clearInputs(self):
-        # self.edCOMPort.setText('')
-        # self.edDate.setText('')
-        # self.edArmID.setText('')
-        # self.edFilePath.setText('')
-        # self.edFileName.setText('')
-        
+    def clearInputs(self): 
         for row in range(self.readingTbl.rowCount()):
             self.readingTbl.setItem(row, 1, QTableWidgetItem(''))
         
@@ -173,12 +178,13 @@ class readingUI(QMainWindow):
 
     def isReading(self):
         if self.startButton.text() == 'Start':
-            self.COMPort = 'COM' + self.edCOMPort.text()
             self.readButton.setEnabled(True)
             self.startButton.setText('Stop')
+            self.exportButton.setEnabled(True)
         elif self.startButton.text() == 'Stop':
             self.startButton.setText('Start')
             self.readButton.setEnabled(False)
+            self.exportButton.setEnabled(False)
 
 
 class internalController:
@@ -190,19 +196,3 @@ class internalController:
     def connectIntSigs(self):
         self.readingWindow.clearButton.clicked.connect(self.readingWindow.clearInputs)
         self.readingWindow.startButton.clicked.connect(self.readingWindow.isReading)
-
-    
-# def main():
-
-#     DXL360App = QApplication(sys.argv)
-
-#     readingWindow = readingUI()
-#     readingWindow.show()
-
-#     internalController(readingWindow=readingWindow)
-
-#     sys.exit(DXL360App.exec_())
-
-
-# if __name__ == '__main__':
-#     main()
