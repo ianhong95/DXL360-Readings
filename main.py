@@ -5,6 +5,8 @@ from PyQt5.QtWidgets import QLabel, QLineEdit, QPushButton, QTableWidget, QTable
 import sys
 import serial
 
+import openpyxl as xl
+
 from SerialObjClass import SerialObj as cereal
 
 
@@ -40,12 +42,32 @@ def recordReading(mainGUI, device):
     print('now the current row is ' + str(mainGUI.readingTbl.currentRow()))
 
 
-def gen()
+def outputToExcel():
+    # Loop through items in readingTbl
+        # if item.text() is not blank, find the next available row in Excel sheet
+            # output item.text() to the empty row
+    pass
 
+
+class xlWorkbook:
+    def __init__(self, filePath, fileName):
+        self.filePath = filePath
+        self.fileName = fileName
+    
+
+    def initWorkbook(self):
+        self.xlWb = xl.load_workbook(self.filePath + '\\' + self.fileName)
+        return self.xlWb
+
+    
+    def saveWorkbook(self):
+        self.xlWb.save(self.fileName)
+        
 
 class externalController:
     def __init__(self, mainGUI):
         self.mainGUI = mainGUI
+
         self.connectExtSigs()
     
     
@@ -58,9 +80,34 @@ class externalController:
                 print('Serial Device already exists!')
 
 
+    # ---- Excel handling functions ----- #
+    def xlWb(self):
+        self.xlPath = self.mainGUI.edFilePath.text()
+        self.xlFile = self.mainGUI.edFileName.text()
+
+        # Initialize excel workbook object
+        wbObject = xlWorkbook(self.xlPath, self.xlFile)
+        self.wb = wbObject.initWorkbook()
+        self.workSheet = self.wb['Sheet1']
+
+        self.wb.save(self.xlFile)
+
+
+    def xlWrite(self):
+        # Find first empty row under column C
+        for row in range(10):
+            print(row)
+            reading = self.mainGUI.readingTbl.itemAt(row, 1).text()
+            print(reading, type(reading))
+            checkCell = self.workSheet['C' + str(row+6)]
+            checkCell = reading
+
+
     def connectExtSigs(self):
         self.mainGUI.readButton.clicked.connect(lambda: recordReading(self.mainGUI, self.serialDevice))
         self.mainGUI.startButton.clicked.connect(self.initCOMPort)
+        self.mainGUI.startButton.clicked.connect(self.xlWb)
+        self.mainGUI.exportButton.clicked.connect(self.xlWrite)
 
 
 def main():

@@ -64,7 +64,7 @@ class readingUI(QMainWindow):
             str(datetime.now().year)
             )
         self.edArmID = QLineEdit(str(datetime.now()))
-        self.edFilePath = QLineEdit('T:\\Engineering\\Engineering\\Projects')
+        self.edFilePath = QLineEdit('C:\\Users\\ianqy\\VSCode\\DXL360 Readings\\DXL360-Readings')
         self.edFileName = QLineEdit('readings.xlsx')
 
 

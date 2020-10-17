@@ -34,13 +34,15 @@ def main():
 if __name__ == "__main__":
 
     # ----- Enter workbook and worksheet names ----- #
-    fileName = "readings.xlsx"
-    sheetName = "Sheet1"
+    filePath = 'C:\\Users\\ianqy\\VSCode\\DXL360 Readings\\DXL360-Readings'
+    fileName = "readings"
+    sheetIndex = 1
 
 
     # ----- Load workbook and select worksheet ------ #
-    workbook = openpyxl.load_workbook(fileName)
-    worksheet = workbook[sheetName]
+    workbook = openpyxl.load_workbook(filePath + '\\' + fileName + '.xlsx')
+    worksheet = workbook['Sheet1']
+    print(worksheet)
 
     # ----- Initialize keyboard listener ----- #
     listener = keyboard.Listener(
