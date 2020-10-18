@@ -34,13 +34,13 @@ def main():
 if __name__ == "__main__":
 
     # ----- Enter workbook and worksheet names ----- #
-    filePath = 'C:\\Users\\ianqy\\VSCode\\DXL360 Readings\\DXL360-Readings'
-    fileName = "readings"
+    filePath = 'C:\\Users\\ianho\\VSCode\\DXL360_Readings'
+    fileName = "readings.xlsx"
     sheetIndex = 1
 
 
     # ----- Load workbook and select worksheet ------ #
-    workbook = openpyxl.load_workbook(filePath + '\\' + fileName + '.xlsx')
+    workbook = openpyxl.load_workbook(filePath + '\\' + fileName)
     worksheet = workbook['Sheet1']
     print(worksheet)
 

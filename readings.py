@@ -3,14 +3,6 @@ import re
 from pynput import keyboard
 import csv
 
-# --- CODE FLOW --- #
-
-# 1) Take reading, convert to string [DONE]
-# 2) Use RegEx to find a readable portion [DONE]
-# 3) Convert readable portion to an actual reading [DONE]
-# 4) Make a class for the serial object
-
-# ----------------- #
 
 def on_press(key):
     device.reset_input_buffer()

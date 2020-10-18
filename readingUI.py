@@ -16,7 +16,7 @@ class readingUI(QMainWindow):
         # Inherit from parent (QMainWindow)
         super().__init__()
 
-        self.defaultPath = 'T:\\Engineering\Enginnering\Projects'
+        self.defaultPath = 'T:\\Engineering\\Enginnering\\Projects'
 
         self.setWindowTitle('DXL360 Readings')
         self.setFixedSize(800, 1000)
@@ -64,8 +64,8 @@ class readingUI(QMainWindow):
             str(datetime.now().year)
             )
         self.edArmID = QLineEdit(str(datetime.now()))
-        self.edFilePath = QLineEdit('C:\\Users\\ianqy\\VSCode\\DXL360 Readings\\DXL360-Readings')
-        self.edFileName = QLineEdit('readings.xlsx')
+        self.edFilePath = QLineEdit('C:\\Users\\ianho\\Dropbox\\Excel Documents')
+        self.edFileName = QLineEdit('readings')
 
 
         # ----- Initialize input form elements, set default values ----- #
@@ -99,8 +99,8 @@ class readingUI(QMainWindow):
     
     def createTable(self):
         self.defaultArmPos = [
-            '+45°', '+40°', '+30°', '+15°', '0°',
-            '-15°', '-30°', '-45°', '-60°', '-75°'
+            '+45', '+40', '+30', '+15', '0',
+            '-15', '-30', '-45', '-60', '-75'
         ]
 
         self.readingTbl = QTableWidget(len(self.defaultArmPos), 2)
