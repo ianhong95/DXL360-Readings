@@ -4,3 +4,4 @@ readings.xlsx
 .pylintrc
 __pycache__
 /csv
+excelTest.py

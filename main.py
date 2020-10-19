@@ -13,6 +13,7 @@ from SerialObjClass import SerialObj as cereal
 def takeReading(device):
     rawBytes = device.serialRead()
     reading = device.translate()
+    
     return reading
 
 
