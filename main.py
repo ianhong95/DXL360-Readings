@@ -11,29 +11,27 @@ from SerialObjClass import SerialObj as cereal
 
 
 def takeReading(device):
-
     rawBytes = device.serialRead()
     reading = device.translate()
-
-    print(device.finalReading)
-
     return reading
 
 
 def recordReading(mainGUI, device):
     reading = takeReading(device)
 
+    floatReading = str(reading[2])
+
     if mainGUI.readingTbl.currentRow() == -1:
         mainGUI.readingTbl.setCurrentCell(0, 1)
-        mainGUI.readingTbl.setItem(mainGUI.readingTbl.currentRow(), 1, QTableWidgetItem(reading[2]))
+        mainGUI.readingTbl.setItem(mainGUI.readingTbl.currentRow(), 1, QTableWidgetItem(floatReading))
         mainGUI.readingTbl.setCurrentCell(mainGUI.readingTbl.currentRow() + 1, 1)
 
     elif mainGUI.readingTbl.currentRow() != -1 and mainGUI.readingTbl.currentRow() < mainGUI.readingTbl.rowCount() - 1:
-        mainGUI.readingTbl.setItem(mainGUI.readingTbl.currentRow(), 1, QTableWidgetItem(reading[2]))
+        mainGUI.readingTbl.setItem(mainGUI.readingTbl.currentRow(), 1, QTableWidgetItem(floatReading))
         mainGUI.readingTbl.setCurrentCell(mainGUI.readingTbl.currentRow() + 1, 1)
 
     elif mainGUI.readingTbl.currentRow() != -1 and mainGUI.readingTbl.currentRow() == mainGUI.readingTbl.rowCount() - 1:
-        mainGUI.readingTbl.setItem(mainGUI.readingTbl.currentRow(), 1, QTableWidgetItem(reading[2]))
+        mainGUI.readingTbl.setItem(mainGUI.readingTbl.currentRow(), 1, QTableWidgetItem(floatReading))
 
 
 class xlWorkbook:
@@ -57,7 +55,7 @@ class externalController:
     
     def initCOMPort(self):
         if self.mainGUI.startButton.text() == 'Stop':
-            self.COMPort = 'COM' + self.mainGUI.edCOMPort.text()
+            self.COMPort = 'COM' + self.mainGUI.lineEdits['edCOMPort'].text()
             try:
                 self.serialDevice = cereal(self.COMPort, 9600)
             except:
@@ -66,35 +64,46 @@ class externalController:
 
     # ---- Excel handling functions ----- #
     def xlWb(self):
-        self.xlPath = self.mainGUI.edFilePath.text()
-        self.xlFile = self.mainGUI.edFileName.text() + '.xlsx'
+        self.xlPath = self.mainGUI.lineEdits['edFilePath'].text()
+        self.xlFile = self.mainGUI.lineEdits['edFileName'].text() + '.xlsx'
 
         # Initialize excel workbook object
         wbObject = xlWorkbook(self.xlPath, self.xlFile)
-        self.wb = wbObject.initWorkbook()
-        self.workSheet = self.wb['Sheet1']
+        self.wb = wbObject.xlWb
+        self.source = self.wb['Template']
 
 
     def xlWrite(self):
+        armID = self.mainGUI.lineEdits['edArmID'].text()
+        self.workSheet = self.wb.copy_worksheet(self.source)
+        self.workSheet.title = armID
 
         dateCell = self.workSheet['C2']
         armIDCell = self.workSheet['C3']
-        armDescription = self.workSheet['C4']
+        armDescCell = self.workSheet['C4']
 
-        dateCell.value = self.mainGUI.edDate.text()
-        armIDCell.value = self.mainGUI.edArmID.text()
+        dateCell.value = self.mainGUI.lineEdits['edDate'].text()
+        armIDCell.value = self.mainGUI.lineEdits['edArmID'].text()
+        armDescCell.value = self.mainGUI.lineEdits['edArmDesc'].text()
 
-        tblRowCount = self.mainGUI.readingTbl.rowCount()
+        tblRowCount = self.mainGUI.count
+
         for row in range(tblRowCount):
             try:
+                positionValue = self.mainGUI.readingTbl.item(row, 0).text()
                 dataValue = self.mainGUI.readingTbl.item(row, 1).text()
+
+                positionCell = self.workSheet['B' + str(row + 6)]
                 dataCell = self.workSheet['C' + str(row + 6)]
-                print('current row: ' + str(dataCell.row))
-                dataCell.value = str(dataValue)
+
+                dataCell.value = float(dataValue)
+                positionCell.value = positionValue
+                
             except:
                 print('no data!')
 
         self.wb.save(self.xlPath + '\\' + self.xlFile)
+        self.mainGUI.statusLabel.setText('Data exported!')
         print('Data exported!')
 
 

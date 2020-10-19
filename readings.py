@@ -66,13 +66,6 @@ def translate():
 
 
 def main():
-    # angle = translate()
-    # print(angle[2])
-    pass
-    
-
-if __name__ == "__main__":
-
     device = serial.Serial(port='COM5', baudrate=9600)
     print(device.portstr)
 
@@ -81,5 +74,6 @@ if __name__ == "__main__":
         on_release=on_release)
     listener.start()
     
-    while(True):
-        main()
+
+if __name__ == "__main__":
+    main()
