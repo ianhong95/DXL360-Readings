@@ -5,3 +5,4 @@ readings.xlsx
 __pycache__
 /csv
 excelTest.py
+readings.py
